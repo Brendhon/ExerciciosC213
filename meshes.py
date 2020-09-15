@@ -1,20 +1,20 @@
 # Carregando pacotes
 from matplotlib import pyplot
-from Variables import Variables
+import constants as const
 
 class Malha:
 
-    def __init__(self):
+    def __init__(self, legend):
 
-        self.a1 = Variables.COEFICIENTE_A1
-        self.b1 = Variables.COEFICIENTE_B1
+        self.a1 = const.COEFICIENTE_A1
+        self.b1 = const.COEFICIENTE_B1
 
-        self.PV = Variables.PV
-        self.SP = Variables.SP
-        self.tempo = Variables.TEMPO
+        self.PV = const.PV
+        self.SP = const.SP
+        self.tempo = const.TEMPO
 
         self.resposta = []
-        self.legenda = ''
+        self.legenda = legend
     
     def plot(self):
 
@@ -23,12 +23,10 @@ class Malha:
         pyplot.grid(True)
         
 
-
 class Aberta(Malha):
 
     def __init__(self):
-        super().__init__()
-        self.legenda = 'Malha Aberta'
+        super().__init__('Malha Aberta')
     
     def execute(self):
 
@@ -45,9 +43,8 @@ class Aberta(Malha):
 class Fechada(Malha):
 
     def __init__(self):
-        super().__init__()
-        self.legenda = 'Malha Fechada'
-        self.erro = Variables.ERRO
+        super().__init__('Malha Fechada')
+        self.erro = const.ERRO
     
     def execute(self):
 
@@ -63,13 +60,13 @@ class Fechada(Malha):
             # Calculando um novo valor para o PV
             self.PV = self.a1*self.PV + self.b1*self.erro
 
+
 class FechadaComGanho(Malha):
 
     def __init__(self):
-        super().__init__()
-        self.legenda = 'Malha Fechada com ganho proporcional'
-        self.erro = Variables.ERRO
-        self.kp = Variables.G_PROPORCIONAL
+        super().__init__('Malha Fechada com ganho proporcional')
+        self.erro = const.ERRO
+        self.kp = const.G_PROPORCIONAL
     
     def execute(self):
 
@@ -88,16 +85,15 @@ class FechadaComGanho(Malha):
 class FechadaComGanhoIntegral(Malha):
 
     def __init__(self):
-        super().__init__()
-        self.legenda = 'Malha Fechada com ganho Integral e proporcional'
-        self.erro = Variables.ERRO
-        self.kp = Variables.G_PROPORCIONAL
-        self.ki = Variables.G_INTEGRADOR
-        self.ts = Variables.TEMPO_AMOSTRAGEM
+        super().__init__('Malha Fechada com ganho proporcional e integral')
+        self.erro = const.ERRO
+        self.kp = const.G_PROPORCIONAL
+        self.ki = const.G_INTEGRADOR
+        self.ts = const.TEMPO_AMOSTRAGEM
     
     def execute(self):
 
-        # Variaveis auxiliares
+        # Variáveis auxiliares
         proporcional = 0
         integrador = 0
         controlador = 0
@@ -122,6 +118,56 @@ class FechadaComGanhoIntegral(Malha):
 
             # Calculando um novo valor para o PV
             self.PV = self.a1*self.PV + self.b1*controlador
+
+
+class FechadaComGanhoIntegralDerivativo(Malha):
+
+    def __init__(self):
+        super().__init__('Malha Fechada com ganho proporcional, integral e derivativo')
+        self.erro = const.ERRO
+        self.kp = const.G_PROPORCIONAL
+        self.ki = const.G_INTEGRADOR
+        self.kd = const.G_DERIVADOR
+        self.ts = const.TEMPO_AMOSTRAGEM
+    
+    def execute(self):
+
+        # Variaveis auxiliares
+        proporcional = 0
+        integrador = 0
+        controlador = 0
+        derivador = 0
+
+        # Calculo do erro anterior
+        erroAnterior = self.SP - self.PV
+
+        # Malha aberta
+        for i in self.tempo:
+
+            # Calculo do erro
+            self.erro = self.SP - self.PV
+
+            # Ação Proporcional 
+            proporcional = self.kp*self.erro   
+
+            # Ação Integrador 
+            integrador = integrador + self.ki*self.ts*self.erro
+            
+            # Ação Derivador 
+            derivador = ((self.erro - erroAnterior)/self.ts)*self.kd
+
+            # Ação controlador 
+            controlador = integrador + proporcional + derivador
+            
+            # Atualizando erro
+            erroAnterior = self.erro
+
+            # Adicionando PV no array Resposta
+            self.resposta.append(self.PV)
+
+            # Calculando um novo valor para o PV
+            self.PV = self.a1*self.PV + self.b1*controlador
+
 
 def showAll():
     pyplot.title("C213")
