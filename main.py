@@ -6,12 +6,12 @@ def main():
     malhaAberta = malha.Aberta() # Instanciando classe
     malhaAberta.execute() # Executando as operações baseadas nas esquações a diferenças
     malhaAberta.plot() # Plot a resposta
-    
+
     # Malha Fechada 
     malhaFechada = malha.Fechada()  # Instanciando classe
     malhaFechada.execute() # Executando as operações baseadas nas esquações a diferenças
     malhaFechada.plot() # Plot a resposta
-    
+
     # Malha Fechada com Ganho
     malhaFechadaComGanho = malha.FechadaComGanho()  # Instanciando classe
     malhaFechadaComGanho.execute() # Executando as operações baseadas nas esquações a diferenças
@@ -27,7 +27,7 @@ def main():
     malhaComGanhoIntegralDerivativo.execute() # Executando as operações baseadas nas esquações a diferenças
     malhaComGanhoIntegralDerivativo.plot() # Plot a resposta
 
-    # Salvar figura
+    # Salvar figura com todos os Plots
     malha.save("C213")
 
     # Mostrar figura

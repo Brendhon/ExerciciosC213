@@ -168,6 +168,8 @@ class FechadaComGanhoIntegralDerivativo(Malha):
             # Calculando um novo valor para o PV
             self.PV = self.a1*self.PV + self.b1*controlador
 
+def clearPlot():
+    pyplot.clf()
 
 def show():
     pyplot.show()
