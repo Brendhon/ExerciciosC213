@@ -182,4 +182,4 @@ def show():
     pyplot.show()
 
 def save(fileName):
-    pyplot.savefig(f'imgs/{fileName}.png')
+    pyplot.savefig(f'img/{fileName}.png')
