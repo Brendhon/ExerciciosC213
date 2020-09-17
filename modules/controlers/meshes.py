@@ -1,8 +1,8 @@
-# Carregando pacotes
 from matplotlib import pyplot
-import constants as const
+import modules.data.constants as const
+from abc import ABC, abstractmethod
 
-class Malha:
+class Malha(ABC):
 
     def __init__(self, legend):
 
@@ -17,10 +17,13 @@ class Malha:
         self.legenda = legend
     
     def plot(self):
-
         pyplot.plot(self.resposta, label=f'{self.legenda}')
         pyplot.legend()
         pyplot.grid(True)
+
+    @abstractmethod
+    def execute(self):
+        pass
         
 
 class Aberta(Malha):
@@ -44,56 +47,60 @@ class Fechada(Malha):
 
     def __init__(self):
         super().__init__('Malha Fechada')
-        self.erro = const.ERRO
     
     def execute(self):
+
+        # Variavel erro
+        erro = 0
 
         # Malha aberta
         for i in self.tempo:
 
             # Calculo do erro
-            self.erro = self.SP - self.PV
+            erro = self.SP - self.PV
 
             # Adicionando PV no array Resposta
             self.resposta.append(self.PV)
 
             # Calculando um novo valor para o PV
-            self.PV = self.a1*self.PV + self.b1*self.erro
+            self.PV = self.a1*self.PV + self.b1*erro
 
 
 class FechadaComGanho(Malha):
 
     def __init__(self):
         super().__init__('Malha Fechada com ganho proporcional')
-        self.erro = const.ERRO
-        self.kp = const.G_PROPORCIONAL
+        self.kp = const.KP
     
     def execute(self):
+
+        # Variavel erro
+        erro = 0
 
         # Malha aberta
         for i in self.tempo:
 
             # Calculo do erro
-            self.erro = self.kp*(self.SP - self.PV)
+            erro = self.kp*(self.SP - self.PV)
 
             # Adicionando PV no array Resposta
             self.resposta.append(self.PV)
 
             # Calculando um novo valor para o PV
-            self.PV = self.a1*self.PV + self.b1*self.erro
+            self.PV = self.a1*self.PV + self.b1*erro
 
 class FechadaComGanhoIntegral(Malha):
 
     def __init__(self):
         super().__init__('Malha Fechada com ganho proporcional e integral')
-        self.erro = const.ERRO
-        self.kp = const.G_PROPORCIONAL
-        self.ki = const.G_INTEGRADOR
+        self.kp = const.KP
+        self.ki = const.KI
         self.ts = const.TEMPO_AMOSTRAGEM
     
     def execute(self):
 
         # Variáveis auxiliares
+        erro = 0
         proporcional = 0
         integrador = 0
         controlador = 0
@@ -102,13 +109,13 @@ class FechadaComGanhoIntegral(Malha):
         for i in self.tempo:
 
             # Calculo do erro
-            self.erro = self.SP - self.PV
+            erro = self.SP - self.PV
 
             # Ação Proporcional 
-            proporcional = self.kp*self.erro   
+            proporcional = self.kp*erro   
 
             # Ação Integrador 
-            integrador = integrador + self.ki*self.ts*self.erro
+            integrador = integrador + self.ki*self.ts*erro
 
             # Ação controlador 
             controlador = integrador +  proporcional
@@ -124,15 +131,15 @@ class FechadaComGanhoIntegralDerivativo(Malha):
 
     def __init__(self):
         super().__init__('Malha Fechada com ganho proporcional, integral e derivativo')
-        self.erro = const.ERRO
-        self.kp = const.G_PROPORCIONAL
-        self.ki = const.G_INTEGRADOR
-        self.kd = const.G_DERIVADOR
+        self.kp = const.KP
+        self.ki = const.KI
+        self.kd = const.KD
         self.ts = const.TEMPO_AMOSTRAGEM
     
     def execute(self):
 
         # Variaveis auxiliares
+        erro = 0
         proporcional = 0
         integrador = 0
         controlador = 0
@@ -145,22 +152,22 @@ class FechadaComGanhoIntegralDerivativo(Malha):
         for i in self.tempo:
 
             # Calculo do erro
-            self.erro = self.SP - self.PV
+            erro = self.SP - self.PV
 
             # Ação Proporcional 
-            proporcional = self.kp*self.erro   
+            proporcional = self.kp*erro   
 
             # Ação Integrador 
-            integrador = integrador + self.ki*self.ts*self.erro
+            integrador = integrador + self.ki*self.ts*erro
             
             # Ação Derivador 
-            derivador = ((self.erro - erroAnterior)/self.ts)*self.kd
+            derivador = ((erro - erroAnterior)/self.ts)*self.kd
 
             # Ação controlador 
             controlador = integrador + proporcional + derivador
             
             # Atualizando erro
-            erroAnterior = self.erro
+            erroAnterior = erro
 
             # Adicionando PV no array Resposta
             self.resposta.append(self.PV)
@@ -175,4 +182,4 @@ def show():
     pyplot.show()
 
 def save(fileName):
-    pyplot.savefig(f'{fileName}.png')
+    pyplot.savefig(f'imgs/{fileName}.png')

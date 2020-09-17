@@ -1,5 +1,5 @@
 import numpy as np
-from Modelar.utils import load
+from modules.modelar.utils import load
 
 def calculate():
 
