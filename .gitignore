@@ -150,4 +150,6 @@ dmypy.json
 # Ignore all local history of files
 .history
 
+# Imagens
+/**/*.png
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode

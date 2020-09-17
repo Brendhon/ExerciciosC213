@@ -1,4 +1,4 @@
-import meshes as malha
+import Controlers.meshes as malha
 
 def main():
 
@@ -27,8 +27,11 @@ def main():
     malhaComGanhoIntegralDerivativo.execute() # Executando as operações baseadas nas esquações a diferenças
     malhaComGanhoIntegralDerivativo.plot() # Plot a resposta
 
+    # Salvar figura
+    malha.save("C213")
+
     # Mostrar figura
-    malha.showAll()
+    malha.show()
 
 if __name__ == '__main__': # chamada da funcao principal
     main() # chamada da função main

@@ -169,6 +169,8 @@ class FechadaComGanhoIntegralDerivativo(Malha):
             self.PV = self.a1*self.PV + self.b1*controlador
 
 
-def showAll():
-    pyplot.title("C213")
+def show():
     pyplot.show()
+
+def save(fileName):
+    pyplot.savefig(f'{fileName}.png')
