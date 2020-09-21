@@ -3,7 +3,7 @@
     "PV": 0,
     "KP": 4,
     "KI": 0.1,
-    "KD": 10,
+    "KD": 25,
     "TEMPO_INICIAL": 0,
     "TEMPO_FINAL": 300,
     "TEMPO_AMOSTRAGEM": 0.1
